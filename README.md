@@ -25,9 +25,9 @@ In JavaScript, we can pass a function to another function as an argument:
 someFunction(callbackFunction);
 ```
 
-The function we pass as an argument is called a callback function. The callback will then be called by the function it was passed into. For example, the code for someFunction might look a bit like this:
+The function we pass as an argument is called a callback function. The callback will then be called by the function it was passed to. For example, the code for someFunction might look a bit like this:
 ```
-function someFunction (callback) {
+function someFunction(callback) {
   // do some stuff here
   callback();
 }
@@ -42,7 +42,7 @@ someFunction(5); // this doesn't work and is essentially the same as the line ab
 
 So far, we've been passing named functions as callbacks. But we can also pass anonymous functions (similar to passing a block in Ruby like when you pass a block to `.each`):
 ```
-someFunction(function() {
+someFunction(function () {
   return 5;
 });
 ```
@@ -78,7 +78,7 @@ We can defer!!
 When a user submits the form, we want to:
 * Add a div to the posts section
 * Containing an image (img) and a comment (p) supplied by the user
-* The URL for the image and comment are in inputs
+    * The URL for the image and comment are in inputs
 * Not refresh the page
 * Clear the form on submission
 
@@ -109,11 +109,11 @@ By default, event handlers (callbacks) are triggered during the bubbling phase. 
 
 In our JS, let's say we've attached event handlers listening for clicks to the p and the div (assume they're already stored in variables):
 ```
-div.addEventListener('click', function() {
+div.addEventListener('click', function () {
   alert('You clicked a DIV');
 });
 
-p.addEventListener('click', function() {
+p.addEventListener('click', function () {
   alert('You clicked a P, child of DIV');
 });
 ```
@@ -129,13 +129,13 @@ So, we would see the alerts in the following order:
 1. 'You clicked a P, child of DIV'
 2. 'You clicked a DIV'
 
-However, we can change this so that the event handlers are triggered during the capturing phase instead. By adding a third, optional, argument of true to addEventListener: 
+However, we can change this so that the event handlers are triggered during the capturing phase instead. By adding a third, optional, argument of `true` to addEventListener: 
 ```
-div.addEventListener('click', function() {
+div.addEventListener('click', function () {
   alert('You clicked a DIV');
 }, true);
 
-p.addEventListener('click', function() {
+p.addEventListener('click', function () {
   alert('You clicked a P, child of DIV');
 }, true);
 ```
@@ -150,7 +150,7 @@ Do all of my events have to match phases? ie, must they all capture or all bubbl
 - Most apps get by using the default bubbling behavior all or most of the time
 
 What if I don't want the click handler on the DIV in the example above to get triggered when a user clicks the P?
-- Call `event.stopPropagation()` in the P handler and keep the default bubbling behavior
+- Call `event.stopPropagation()` in the P handler
 - This method can be used with capturing or bubbling events
 
 We can demonstrate all of this using our Cat Actions div.
@@ -158,4 +158,4 @@ We can demonstrate all of this using our Cat Actions div.
 ### Event listeners and performance
 We're working on a really simple webpage that doesn't have a lot going on, so if we wanted to, we could attach an event listener to every element. However, for complex pages with many elements, this could slow down the page. The more listeners you attach, the bigger the hit to the performance. For users, this means longer page load times and wait times between triggering an event and seeing the result of that.
 
-Let's make our Cat Actions buttons work by attaching a single event listener to the section element containing all of the buttons.
+Let's make our Cat Actions buttons work by attaching a single event listener to the section element containing all of the buttons. We'll handle each of the buttons within this single event handler using what we know about `target`.
