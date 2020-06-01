@@ -1,6 +1,8 @@
 # JS Events
 We're gonna make things happen!
 
+To see the solution branch, go to https://github.com/helloRupa/js-events
+
 ## By the end of this lesson, you should be able to:
 Attach event handlers (callbacks) to specific elements in the DOM
 
