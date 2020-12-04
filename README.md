@@ -17,6 +17,7 @@ A webpage that let's a user submit a gif with a comment and posts it to the page
     - [ ] Differentiate between passing a function and calling one
 - [ ] Identify some common events (DOMContentLoaded, click, keydown, submit)
 - [ ] Add event listeners to our code (form, preventDefault, target, currentTarget)
+- [ ] Utilize event delegation
 - [ ] Explain the difference between bubbling and capturing events (if time)
     - [ ] Describe how an event moves through the DOM
 - [ ] Discuss how event listeners affect performance (if time)
@@ -157,7 +158,130 @@ What if I don't want the click handler on the DIV in the example above to get tr
 
 We can demonstrate all of this using our Cat Actions div.
 
+## Event Delegation (Highly recommend you get comfy with this)
+
+Event delegation allows us to attach a listener to a parent element, rather than each of its individual children. For example, we could attach a single listener to the body element and have it handle every single event on a webpage if we wanted to. This works because every parent element is "aware" of its children's events due to how events move through the DOM (bubbling and capturing). Think of it like this: if you have a child and your child decides to learn the tuba, you as the parent will always be aware of when they're playing that darnded tuba!
+
+Consider this HTML:
+
+```
+<div>
+  <p>I am first.</p>
+  <p>I am second.</p>
+  <p>I am third.</p>
+  <p>I am fourth.</p>
+</div>
+```
+
+Let's attach event listeners to every `p` element individually (assume we've already grabbed the elements from the DOM), and that the event handler produces a different alert based on the contents of the paragraph:
+
+```
+allParagraphs.forEach(function (p) {
+  p.addEventListener("click", function (e) {
+    switch(e.target.textContent) {
+      case "I am first.":
+        alert("You win!");
+        break;
+      case "I am second.":
+        alert("You get silver!");
+        break;
+      case "I am third.":
+        alert("You get bronze!");
+        break;
+      default:
+        alert("Sorry, you did not place.");
+    }
+  });
+});
+```
+
+We have added the same exact code (handler) to every single `p` element, and we have added four event listeners.
+
+Now let's see what happens when we use event delegation:
+
+```
+div.addEventListener("click", function(e) {
+  switch(e.target.textContent) {
+    case "I am first.":
+      alert("You win!");
+      break;
+    case "I am second.":
+      alert("You get silver!");
+      break;
+    case "I am third.":
+      alert("You get bronze!");
+      break;
+    default:
+      alert("Sorry, you did not place.");
+  }
+});
+```
+
+We added one listener to handle all of the `p` elements! Personally, I find this more readable and I like how short it is.
+
+Event delegation helps us solve two problems: dynamically listening to events (e.g. what if we add more elements to the DOM using JS and then need to listen for events on those elements) and performance.
+
+### Listening for Events on Elements Added to the DOM by JS
+
+With JavaScript, we can add and remove elements from the DOM whenever we want. If we want to add elements that trigger events, we have two options: we can add those listeners when we add the elements or we can use event delegation to handle those events. With event delegation, we can add the code that handles those elements' events even when they're not in the DOM.
+
+Let's assume we have this `div` in our webpage, and we want to display a sound when a button is clicked:
+
+```
+<div>
+  <button>Say Meow</button>
+  <button>Say Woof</button>
+</div>
+```
+
+So we grab all the buttons, and then add our event listeners to each one. But then we decide to create a new button for a pig (Assume we've grabbed the necessary elements from the DOM earlier in the code):
+
+```
+allButtons.forEach(function (button) {
+  button.addEventListener("click", function (e) {
+    const buttonText = e.target.textContent;
+    const words = buttonText.split(" ");
+    const saying = words[words.length - 1];
+
+    alert(saying);
+  });
+});
+
+const pigButton = document.createElement("button");
+
+pigButton.textContent = "Say Oink";
+pigButton.addEventListener("click", function (e) {
+  const buttonText = e.target.textContent;
+  const words = buttonText.split(" ");
+  const saying = words[words.length - 1];
+
+  alert(saying);
+});
+
+div.append(pigButton);
+```
+
+Now let's see what happens when we use event delegation instead:
+
+```
+div.addEventListener("click", function (e) {
+  if (e.target.tagName === "BUTTON") {
+    const buttonText = e.target.textContent;
+    const words = buttonText.split(" ");
+    const saying = words[words.length - 1];
+
+    alert(saying);
+  }
+});
+
+const pigButton = document.createElement("button");
+pigButton.textContent = "Say Oink";
+div.append(pigButton);
+```
+
+We can easily add any number of additional animal sound buttons to our `div` and they'll be handled automagically! Our code is also shorter, which is noice. This way of handling events becomes increasingly more important as our webpages and their functionality become more complex.
+
 ### Event listeners and performance
-We're working on a really simple webpage that doesn't have a lot going on, so if we wanted to, we could attach an event listener to every element. However, for complex pages with many elements, this could slow down the page. The more listeners you attach, the bigger the hit to the performance. For users, this means longer page load times and wait times between triggering an event and seeing the result of that.
+So far we've worked on really simple webpages that don't have a lot going on, so if we wanted to, we could attach an event listener to every element. However, for complex pages with many elements, this could slow down the page. The more listeners you attach, the bigger the hit to the performance. For users, this means longer page load times and wait times between triggering an event and seeing the result of that.
 
 Let's make our Cat Actions buttons work by attaching a single event listener to the section element containing all of the buttons. We'll handle each of the buttons within this single event handler using what we know about `target`.
